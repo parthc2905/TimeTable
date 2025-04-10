@@ -1,0 +1,31 @@
+.buttons{
+    margin-top: -80px ;
+    /* background: linear-gradient(0deg, #00008B, #5cb9f2); */
+    /* background-size: 400% 400%; */
+    /* animation: rotateGradient 83s linear infinite; */
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+/* @keyframes rotateGradient {
+    0% {
+        background: linear-gradient(0deg, #00008B, #5cb9f2);
+    }
+    25% {
+        background: linear-gradient(90deg, #00008B, #5cb9f2);
+    }
+    50% {
+        background: linear-gradient(180deg, #00008B, #5cb9f2);
+    }
+    75% {
+        background: linear-gradient(270deg, #00008B,#5cb9f2);
+    }
+    100% {
+        background: linear-gradient(360deg, #00008B, #5cb9f2);
+    }
+} */
+
+input{
+    width: 300px;
+}

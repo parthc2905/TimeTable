@@ -1,0 +1,98 @@
+{% extends "dashboard.html" %}
+
+{% block title %}
+Custom Datepicker
+{% endblock %}
+
+{% block link %}
+
+<link rel="stylesheet" href="static/calender.css" />
+
+<script type="application/json" id="event-data">
+  {{ event | tojson }}
+</script>
+
+
+
+<script type="module" src="static/calender.js"></script>
+
+{% endblock %}
+
+
+<!-- {% block content_1 %}
+
+{% endblock %} -->
+
+
+
+{% block content_2 %}
+<div class="container">
+  <div class="row">
+    <div class="col">
+      <div class="datepicker-container">
+        <input type="text" class="date-input" placeholder="Select date">
+
+        <div class="datepicker">
+          <!-- .datepicker-header -->
+          <div class="datepicker-header">
+            <button class="prev">Prev</button>
+
+            <div>
+              <select class="month-input">
+                <option>January</option>
+                <option>February</option>
+                <option>March</option>
+                <option>April</option>
+                <option>May</option>
+                <option>June</option>
+                <option>July</option>
+                <option>August</option>
+                <option>September</option>
+                <option>October</option>
+                <option>November</option>
+                <option>December</option>
+              </select>
+              <input type="number" class="year-input" />
+            </div>
+
+            <button class="next">Next</button>
+          </div>
+          <!-- /.datepicker-header -->
+
+          <!-- .days -->
+          <div class="days">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+          </div>
+          <!-- /.days -->
+
+          <!-- .dates -->
+          <div class="dates"></div>
+          <!-- /.dates -->
+
+          <!-- .datepicker-footer -->
+          <div class="datepicker-footer">
+            <button class="cancel">Clear</button>
+            <button type="submit" class="apply">Select</button>
+          </div>
+          <!-- /.datepicker-footer -->
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <ul>
+        {% for tas in tasks %}
+        <li>{{ tas.description }} - due {{ tas.event_date.strftime('%d-%m-%Y') }}</li>
+        {% else %}
+        <li>No tasks found.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

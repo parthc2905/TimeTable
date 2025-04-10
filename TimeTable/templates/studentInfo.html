@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Student information form
+{% endblock %}
+
+
+{% block content %}
+<form method="POST" class="container form-group card my-5 col-md-6">
+    {{ form1.hidden_tag() }}
+    <h1  class="text-center p-4">Student information</h1>
+    <br>
+    {{ form1.enroll.label(class="form-label") }}
+    {{ form1.enroll(class="form-control", placeholder="Enrollment No.") }}
+    <br>
+    {{ form1.name.label(class="form-label") }}
+    {{ form1.name(class="form-control", placeholder="Name") }}
+    <br>
+    {{ form1.sem.label(class="form-label") }}
+    {{ form1.sem(class="form-control", placeholder="Sem") }}
+    <br>
+    {{ form1.mentor.label(class="form-label") }}
+    {{ form1.mentor(class="form-control", placeholder="Mentor/Faculty Id") }}
+    <br>
+    {{ form1.submit(class="form-control btn btn-primary btn-lg form-label") }}
+    <br>
+</form>
+
+{% endblock %}

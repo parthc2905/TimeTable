@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Admin information form
+{% endblock %}
+
+
+{% block content %}
+<form method="POST" class="container form-group card my-5 col-md-6">
+    {{ form3.hidden_tag() }}
+    <h1 class="text-center p-4">Admin information</h1>
+    <br>
+    {{ form3.adminId.label(class="form-label") }}
+    {{ form3.adminId(class="form-control", placeholder="Admin Id") }}
+    <br>
+    {{ form3.orgId.label(class="form-label") }}
+    {{ form3.orgId(class="form-control", placeholder="Organization/college Code") }}
+    <br>
+    {{ form3.orgName.label(class="form-label") }}
+    {{ form3.orgName(class="form-control", placeholder="Organization/college Name") }}
+    <br>
+    {{ form3.contactDetails.label(class="form-label") }}
+    {{ form3.contactDetails(class="form-control", placeholder="Contact Details") }}
+    <br>
+    {{ form3.submit(class="form-control btn btn-primary btn-lg form-label") }}
+    <br>
+</form>
+
+{% endblock %}

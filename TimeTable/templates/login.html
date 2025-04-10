@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Login
+{% endblock %}
+
+
+
+{% block content %}
+<form method="POST" class="container form-group card my-5 col-md-6">
+    {{ form.hidden_tag() }}
+    <h1 class="text-center p-4">Login</h1>
+    <br>
+    {{ form.username.label(class="form-label") }}
+    {{ form.username(class="form-control ", placeholder="User name", id="username") }}
+    <br>
+    {{ form.email.label(class="form-label") }}
+    {{ form.email(class="form-control ", placeholder="Email",id='email') }}
+    <br>
+    {{ form.password.label(class="form-label") }}
+    {{ form.password(class="form-control", placeholder="Password") }}
+    <br>
+    {{ form.submit(class="form-control btn btn-primary btn-lg form-label") }}
+    <br>
+</form>
+
+{% endblock %}
+
