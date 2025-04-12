@@ -1,0 +1,23 @@
+{% extends "dashboard.html" %}
+
+{% block title %}
+admin
+{% endblock %}
+
+<!-- {% block link %}
+
+{% endblock %} -->
+
+{% block content_1 %}
+<div class="col">
+    <a href="{{ url_for('admin_student') }}">Student</a>
+    <br>
+    <a href="{{ url_for('admin_faculty') }}">Faculty</a>
+    <br>
+    <a href="{{ url_for('admin_subject') }}">Subject</a>
+    <br>
+    <a href="{{ url_for('admin_class_location') }}">Class location</a>
+    <br>
+    <a href="#">Profile</a>
+</div>
+{% endblock %}

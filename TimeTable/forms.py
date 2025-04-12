@@ -56,3 +56,19 @@ class TaskDetail(FlaskForm):
 class RemoveTaskDetail(FlaskForm):
     select = IntegerField(label="Enter number from first to remove: ")
     submit = SubmitField(label='Remove')
+
+class AdminStudent(FlaskForm):
+    choose = SelectField(choices = [('1','Add Student'),('2','Remove Student')], default = ['1'],label='Add/Delete :')
+    submit = SubmitField(label='Add/Remove')
+
+class AdminFaculty(FlaskForm):
+    choose = SelectField(choices = [('1','Add Faculty'),('2','Remove Faculty')], default = ['1'],label='Add/Delete :')
+    submit = SubmitField(label='Add/Remove')
+
+class AdminSubject(FlaskForm):
+    choose = SelectField(choices = [('1','Add Subject'),('2','Remove Subject')], default = ['1'],label='Add/Delete :')
+    submit = SubmitField(label='Add/Remove')
+
+class AdminClassLocation(FlaskForm):
+    choose = SelectField(choices = [('1','Add Class Location'),('2','Remove Class Location')], default = ['1'],label='Add/Delete :')
+    submit = SubmitField(label='Add/Remove')

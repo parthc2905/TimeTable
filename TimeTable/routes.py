@@ -2,7 +2,7 @@ from flask import render_template,redirect,url_for,request,session,jsonify
 from TimeTable.index import tableGen
 from TimeTable import app
 from TimeTable.models import User,Student,Faculty,Admin,Task
-from TimeTable.forms import RegisterForm,InputDetail,StudentInfo,FacultyInfo,AdminInfo,LoginDetail,TaskDetail,RemoveTaskDetail
+from TimeTable.forms import RegisterForm,InputDetail,StudentInfo,FacultyInfo,AdminInfo,LoginDetail,TaskDetail,RemoveTaskDetail,AdminStudent,AdminFaculty,AdminSubject,AdminClassLocation
 from TimeTable import db
 import json,os,datetime
 
@@ -45,8 +45,8 @@ def view_page():
     return render_template("log.html",d=data['div'],weeks=data['extra'][0],sizes=data['extra'][1],block=data['extra'][2],days=days)
 
 
-@app.route("/dashboard",methods=['GET','POST'])
-def dashboard_page():
+@app.route("/studentdashboard",methods=['GET','POST'])
+def student_dashboard_page():
     # event = ['2025-04-16', '2025-04-03', '2025-04-10']'
     tasks = Task.query.filter_by(own=2).all()
     event = [str(task.event_date) for task in tasks]
@@ -91,6 +91,43 @@ def remove_task_page():
             print("No task to remove")
     return render_template('removetask.html',tasks=tasks,task=task)
 
+
+@app.route("/admindashboard",methods=['GET','POST'])
+def admin_dashboard_page():
+    return render_template('adminStudent.html')
+
+@app.route("/adminstudent",methods=['GET','POST'])
+def admin_student():
+    form = AdminStudent()
+    if form.validate_on_submit():
+        return f"<h1>{form.choose.data}</h1>"
+    return render_template('adminStudent.html',form=form)
+
+
+@app.route("/adminfaculty",methods=['GET','POST'])
+def admin_faculty():
+    form = AdminFaculty()
+    if form.validate_on_submit():
+        return f"<h1>{form.choose.data}</h1>"
+    return render_template('adminFaculty.html',form=form)
+
+
+@app.route("/adminsubject",methods=['GET','POST'])
+def admin_subject():
+    form = AdminSubject()
+    if form.validate_on_submit():
+        return f"<h1>{form.choose.data}</h1>"
+    return render_template('adminSubject.html',form=form)
+
+
+@app.route("/adminclasslocation",methods=['GET','POST'])
+def admin_class_location():
+    form = AdminClassLocation()
+    if form.validate_on_submit():
+        return f"<h1>{form.choose.data}</h1>"
+    return render_template('adminClassLocation.html',form=form)
+
+
 @app.route("/studentinfo", methods=['GET','POST'])
 def student_info():
     form1 = StudentInfo()
@@ -106,7 +143,7 @@ def student_info():
         db.session.add(student_to_create)
         db.session.commit()
         id = student_to_create.id
-        return redirect(url_for('dashboard_page',studentid=id))
+        return redirect(url_for('student_dashboard_page',studentid=id))
     return render_template('studentinfo.html',form1=form1)
 
 
@@ -141,7 +178,7 @@ def admin_info():
                                     )
         db.session.add(admin_to_create)
         db.session.commit()
-        return redirect(url_for('home_page'))
+        return redirect(url_for('admin_dashboard_page'))
     return render_template('adminInfo.html',form3=form3)
 
 

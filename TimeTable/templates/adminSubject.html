@@ -1,0 +1,18 @@
+{% extends 'admindashboard.html' %}
+
+{% block title %}
+Admin
+{% endblock %}
+
+
+{% block content_2 %}
+<form method="POST" class="container form-group card my-5 col-md-6">
+    {{ form.hidden_tag() }}
+    <h1 class="text-center p-4">Subject information</h1>
+    <br>
+    {{ form.choose.label(class="form-label") }}
+    {{ form.choose(class="form-control", placeholder="date") }}
+    <br>
+    {{ form.submit(class="form-control btn btn-primary btn-lg form-label") }}
+</form>
+{% endblock %}
