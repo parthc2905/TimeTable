@@ -1,5 +1,9 @@
 {% extends 'dashboard.html' %}
 
+{% block title %}
+task information form
+{% endblock %}
+
 
 {% block content_1 %}
 <div class="col">
@@ -20,21 +24,20 @@
 
 
 {% block content_2 %}
-
 <form method="POST" class="container form-group card my-5 col-md-6">
-    {{ task.hidden_tag() }}
-    <h1 class="text-center p-4">task information remove</h1>
-    <br>
-    {{ task.select.label(class="form-label") }}
-    {{ task.select(class="form-control", placeholder="task-number") }}
-    <br>
-    {{ task.submit(class="form-control btn btn-primary btn-lg form-label") }}
-    <ul>
-        {% for tas in tasks %}
-        <li>{{ tas.description }} - due {{ tas.event_date.strftime('%d-%m-%Y') }}</li>
-        {% else %}
-        <li>No tasks found.</li>
-        {% endfor %}
-      </ul>
+  {{ task.hidden_tag() }}
+  <h1 class="text-center p-4">View information</h1>
+  <br>
+  {{ task.date.label(class="form-label") }}
+  {{ task.date(class="form-control", placeholder="date") }}
+  <br>
+  {{ task.submit(class="form-control btn btn-primary btn-lg form-label") }}
+  <ul>
+    {% for tas in tasks %}
+    <li>{{ tas.description }} - due {{ tas.event_date.strftime('%d-%m-%Y') }}</li>
+    {% else %}
+    <li>No tasks found.</li>
+    {% endfor %}
+  </ul>
 </form>
 {% endblock %}

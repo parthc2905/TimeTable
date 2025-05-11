@@ -1,19 +1,27 @@
-from flask import render_template,redirect,url_for,request,session,jsonify
+from flask import render_template,redirect,url_for,request,session,jsonify,Response,flash
+from markupsafe import Markup
 from TimeTable.index import tableGen
 from TimeTable import app
-from TimeTable.models import User,Student,Faculty,Admin,Task
-from TimeTable.forms import RegisterForm,InputDetail,StudentInfo,FacultyInfo,AdminInfo,LoginDetail,TaskDetail,RemoveTaskDetail,AdminStudent,AdminFaculty,AdminSubject,AdminClassLocation
+from TimeTable.models import User,Student,Faculty,Admin,Task,BranchDivision,Courses,Locations
+from TimeTable.forms import RegisterForm,InputDetail,StudentInfo,FacultyInfo,AdminInfo,LoginDetail,TaskDetail,ViewDetail,RemoveTaskDetail,AdminStudent,AdminFaculty,AdminCourse,AdminClassLocation, AdminBranchDivision
 from TimeTable import db
-import json,os,datetime
+from TimeTable.studentchatbot import StudentChatbot 
+import json,os,datetime,time
+from sqlalchemy import func
+from markdown import markdown
 
-@app.route("/",methods=['GET','POST'])
-@app.route("/home", methods=['GET','POST'])
+chatbot = StudentChatbot(api_key="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")
+
+@app.route("/", methods=['GET', 'POST'])
+@app.route("/home", methods=['GET', 'POST'])
 def home_page():
     if request.method == "POST":
-        if request.form["submit"] == "Generate":
+        # Check which button was clicked
+        if "generate" in request.form:  # If Generate button was clicked
             return redirect(url_for('input_page'))
-        else:
+        elif "view" in request.form:    # If View button was clicked
             return redirect(url_for('view_page'))
+    
     return render_template('home.html')
     
 @app.route("/Input",methods=['GET','POST'])
@@ -45,6 +53,68 @@ def view_page():
     return render_template("log.html",d=data['div'],weeks=data['extra'][0],sizes=data['extra'][1],block=data['extra'][2],days=days)
 
 
+@app.route("/chat", methods=["GET", "POST"])
+def chat_page():
+    if "chat_history" not in session:
+        session["chat_history"] = []
+        session["session_id"] = chatbot.get_new_session_id()
+    
+    if request.method == "POST":
+        user_input = request.form.get("user_input", "").strip()
+        if user_input:
+            try:
+                # Add user message to history
+                session["chat_history"].append({"sender": "user", "message": user_input})
+                session.modified = True
+                
+                # Get AI response in chunks
+                response_chunks = []
+                for chunk in chatbot.process_message(session["session_id"], user_input):
+                    response_chunks.append(chunk)
+                
+                # Join chunks and format the response
+                ai_response = "".join(response_chunks)
+                
+                # Add formatted AI response to history
+                session["chat_history"].append({"sender": "ai", "message": ai_response})
+                session.modified = True
+                
+                # Return JSON response with formatted message
+                return jsonify({
+                    "status": "success",
+                    "user_message": user_input,
+                    "ai_message": Markup(markdown(ai_response))
+                })
+                
+            except Exception as e:
+                print(f"Error processing message: {str(e)}")
+                # Add error message to history
+                error_message = "I'm having trouble processing your request. Please try rephrasing your question or try again later."
+                session["chat_history"].append({"sender": "ai", "message": error_message})
+                session.modified = True
+                
+                # Return error response
+                return jsonify({
+                    "status": "error",
+                    "user_message": user_input,
+                    "ai_message": Markup(markdown(error_message))
+                })
+    
+    # Convert markdown to HTML for AI messages
+    formatted_history = []
+    for msg in session.get("chat_history", []):
+        if msg["sender"] == "ai":
+            formatted_history.append({
+                "sender": msg["sender"],
+                "message": Markup(markdown(msg["message"]))
+            })
+        else:
+            formatted_history.append(msg)
+    
+    return render_template("studentchatbot.html", chat_history=formatted_history)
+
+
+
 @app.route("/studentdashboard",methods=['GET','POST'])
 def student_dashboard_page():
     # event = ['2025-04-16', '2025-04-03', '2025-04-10']'
@@ -52,8 +122,19 @@ def student_dashboard_page():
     event = [str(task.event_date) for task in tasks]
     date_events = {}
     for i in tasks:
-        date_events[i.event_date] = i.description 
+        date_events[i.event_date] = i.description
     return render_template('calender.html',event=event,tasks=tasks,date_events=date_events)
+
+@app.route('/viewtask',methods=['GET','POST'])
+def view_task_page():
+    task = ViewDetail()
+    tasks = Task.query.filter_by(own=2).all()
+    if task.validate_on_submit():
+        user_input = str(task.date.data)
+        parsed_date = datetime.datetime.strptime(user_input, "%Y-%m-%d").date()
+        tasks = Task.query.filter_by(event_date=parsed_date).all()
+
+    return render_template('viewtask.html',task=task,tasks=tasks)
 
 @app.route("/task",methods=['GET','POST'])
 def task_page():
@@ -69,7 +150,8 @@ def task_page():
         # print(user_input,desc,type(parsed_date))
         task_to_create = Task(event_date=parsed_date,
                      description=desc,
-                     own=session.get('student_id')
+                     own=2
+                    #  own=session.get('student_id')+
                      )
         db.session.add(task_to_create)
         db.session.commit()
@@ -93,39 +175,173 @@ def remove_task_page():
 
 
 @app.route("/admindashboard",methods=['GET','POST'])
-def admin_dashboard_page():
-    return render_template('adminStudent.html')
-
-@app.route("/adminstudent",methods=['GET','POST'])
 def admin_student():
     form = AdminStudent()
     if form.validate_on_submit():
-        return f"<h1>{form.choose.data}</h1>"
-    return render_template('adminStudent.html',form=form)
+        if form.choose.data == '1':  # Add student
+            # Create new user and student
+            user_to_create = User(username=1,
+                                email=form.email.data,
+                                password_hash=form.password.data)
+    
+            student_to_create = Student(enroll=form.enroll.data,
+                                     name=form.name.data,
+                                     sem=form.sem.data,
+                                     mentorid=form.mentor.data,
+                                     owner=user_to_create)
+            db.session.add_all([user_to_create, student_to_create])
+            db.session.commit()
+            flash('Student added successfully!', 'success')
+            
+        elif form.choose.data == '2':  # Remove student
+            # Find student by enrollment number
+            student = Student.query.filter_by(enroll=form.enroll.data).first()
+            if student:
+                # Get the associated user
+                user = student.owner
+                # Delete student first (due to foreign key constraint)
+                db.session.delete(student)
+                # Then delete the user
+                db.session.delete(user)
+                db.session.commit()
+                flash('Student removed successfully!', 'success')
+            else:
+                flash('Student not found!', 'error')
+                
+    # Get all students for display
+    students = Student.query.all()
+    return render_template('adminStudent.html', form=form, students=students)
 
 
 @app.route("/adminfaculty",methods=['GET','POST'])
 def admin_faculty():
     form = AdminFaculty()
     if form.validate_on_submit():
-        return f"<h1>{form.choose.data}</h1>"
-    return render_template('adminFaculty.html',form=form)
+        if form.choose.data == '1':  # Add faculty
+            # Create new user and faculty
+            user_to_create = User(username=2,
+                                email=form.email.data,
+                                password_hash=form.password.data)
+    
+            faculty_to_create = Faculty(facultyId=form.facultyid.data,
+                                     name=form.name.data,
+                                     owner=user_to_create)
+            db.session.add_all([user_to_create, faculty_to_create])
+            db.session.commit()
+            flash('Faculty added successfully!', 'success')
+            
+        elif form.choose.data == '2':  # Remove faculty
+            # Find faculty by faculty ID
+            faculty = Faculty.query.filter_by(facultyId=form.facultyid.data).first()
+            if faculty:
+                # Get the associated user
+                user = faculty.owner
+                # Delete faculty first (due to foreign key constraint)
+                db.session.delete(faculty)
+                # Then delete the user
+                db.session.delete(user)
+                db.session.commit()
+                flash('Faculty removed successfully!', 'success')
+            else:
+                flash('Faculty not found!', 'error')
+                
+    # Get all faculty for display
+    faculty_list = Faculty.query.all()
+    return render_template('adminFaculty.html', form=form, faculty_list=faculty_list)
 
 
-@app.route("/adminsubject",methods=['GET','POST'])
-def admin_subject():
-    form = AdminSubject()
+@app.route("/adminbranchdivision",methods=['GET','POST'])
+def admin_branch_division():
+    form = AdminBranchDivision()
     if form.validate_on_submit():
-        return f"<h1>{form.choose.data}</h1>"
-    return render_template('adminSubject.html',form=form)
+        if form.choose.data == '1':  # Add branch
+            # Create new branch division
+            branch_to_create = BranchDivision(branch=form.branch.data,
+                                            division=form.division.data)
+            db.session.add(branch_to_create)
+            db.session.commit()
+            flash('Branch added successfully!', 'success')
+            
+        elif form.choose.data == '2':  # Remove branch
+            # Find branch by name
+            branch = BranchDivision.query.filter_by(branch=form.branch.data).first()
+            if branch:
+                db.session.delete(branch)
+                db.session.commit()
+                flash('Branch removed successfully!', 'success')
+            else:
+                flash('Branch not found!', 'error')
+                
+    # Get all branches for display
+    branches = BranchDivision.query.all()
+    return render_template('adminbranchdivision.html', form=form, branches=branches)
+
+
+@app.route("/admincourse",methods=['GET','POST'])
+def admin_course():
+    form = AdminCourse()
+    if form.validate_on_submit():
+        if form.choose.data == '1':  # Add course
+            # Create new course
+            course_to_create = Courses(courseid=form.courseid.data,
+                                     name=form.name.data)
+            db.session.add(course_to_create)
+            db.session.commit()
+            flash('Course added successfully!', 'success')
+            
+        elif form.choose.data == '2':  # Remove course
+            # Find course by course ID
+            course = Courses.query.filter_by(courseid=form.courseid.data).first()
+            if course:
+                db.session.delete(course)
+                db.session.commit()
+                flash('Course removed successfully!', 'success')
+            else:
+                flash('Course not found!', 'error')
+                
+    # Get all courses for display
+    courses = Courses.query.all()
+    return render_template('adminCourse.html', form=form, courses=courses)
 
 
 @app.route("/adminclasslocation",methods=['GET','POST'])
 def admin_class_location():
     form = AdminClassLocation()
     if form.validate_on_submit():
-        return f"<h1>{form.choose.data}</h1>"
-    return render_template('adminClassLocation.html',form=form)
+        if form.choose.data == '1':  # Add location
+            # Create new location
+            location_to_create = Locations(classLocation=form.classLocation.data,
+                                        floor=form.floor.data)
+            db.session.add(location_to_create)
+            db.session.commit()
+            flash('Class location added successfully!', 'success')
+            
+        elif form.choose.data == '2':  # Remove location
+            # Find location by class location
+            location = Locations.query.filter_by(classLocation=form.classLocation.data).first()
+            if location:
+                db.session.delete(location)
+                db.session.commit()
+                flash('Class location removed successfully!', 'success')
+            else:
+                flash('Class location not found!', 'error')
+                
+    # Get all locations for display
+    locations = Locations.query.all()
+    return render_template('adminClassLocation.html', form=form, locations=locations)
+
+
+
+
+@app.route("/facultydashboard",methods=['GET','POST'])
+def faculty_student():
+    form = AdminStudent()
+    if form.validate_on_submit():
+        if form.choose.data == '1':
+            pass
+        else:
+            pass
+    return render_template('facultydashboard.html',form=form)
 
 
 @app.route("/studentinfo", methods=['GET','POST'])
@@ -178,7 +394,7 @@ def admin_info():
                                     )
         db.session.add(admin_to_create)
         db.session.commit()
-        return redirect(url_for('admin_dashboard_page'))
+        return redirect(url_for('admin_student'))
     return render_template('adminInfo.html',form3=form3)
 
 

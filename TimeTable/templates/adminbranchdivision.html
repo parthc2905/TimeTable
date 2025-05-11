@@ -1,7 +1,7 @@
 {% extends 'admindashboard.html' %}
 
 {% block title %}
-Admin - Class Location Management
+Admin - Branch & Division Management
 {% endblock %}
 
 {% block content_2 %}
@@ -11,40 +11,40 @@ Admin - Class Location Management
         <div class="col-md-6">
             <form method="POST" class="form-group card my-5 p-4">
                 {{ form.hidden_tag() }}
-                <h1 class="text-center p-4">Class Location</h1>
+                <h1 class="text-center p-4">Branch & Division</h1>
                 <br>
                 {{ form.choose.label(class="form-label") }}
                 {{ form.choose(class="form-control") }}
                 <br>
-                {{ form.classLocation.label(class="form-label") }}
-                {{ form.classLocation(class="form-control", placeholder="e.g. A101") }}
+                {{ form.branch.label(class="form-label") }}
+                {{ form.branch(class="form-control", placeholder="Branch Name") }}
                 <br>
-                {{ form.floor.label(class="form-label") }}
-                {{ form.floor(class="form-control", placeholder="Floor Number") }}
+                {{ form.division.label(class="form-label") }}
+                {{ form.division(class="form-control", placeholder="Number of Divisions") }}
                 <br>
                 {{ form.submit(class="form-control btn btn-primary btn-lg form-label") }}
             </form>
         </div>
 
-        <!-- Location List Column -->
+        <!-- Branch List Column -->
         <div class="col-md-6">
             <div class="card my-5">
                 <div class="card-header">
-                    <h3 class="text-center">Current Class Locations</h3>
+                    <h3 class="text-center">Current Branches</h3>
                 </div>
                 <div class="card-body">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Location</th>
-                                <th>Floor</th>
+                                <th>Branch</th>
+                                <th>Divisions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for location in locations %}
+                            {% for branch in branches %}
                             <tr>
-                                <td>{{ location.classLocation }}</td>
-                                <td>{{ location.floor }}</td>
+                                <td>{{ branch.branch }}</td>
+                                <td>{{ branch.division }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

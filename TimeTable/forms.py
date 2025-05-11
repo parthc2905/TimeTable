@@ -53,22 +53,47 @@ class TaskDetail(FlaskForm):
     desc = StringField(label='Task Description : ')
     submit = SubmitField(label='Task')
 
+
+class ViewDetail(FlaskForm):
+    date = DateField('Date', format='%Y-%m-%d')
+    submit = SubmitField(label='Task')
+
 class RemoveTaskDetail(FlaskForm):
     select = IntegerField(label="Enter number from first to remove: ")
     submit = SubmitField(label='Remove')
 
 class AdminStudent(FlaskForm):
     choose = SelectField(choices = [('1','Add Student'),('2','Remove Student')], default = ['1'],label='Add/Delete :')
+    enroll = IntegerField(label="Enter Enrollment number :")
+    name = StringField(label="Enter name as per GTU marksheet: ")
+    email = StringField(label='Email: ')
+    password = PasswordField(label='Password: ')
+    sem =    SelectField(choices=[(1,'1st sem'),(2,'2nd sem'),(3,'3rd sem'),(4,'4th sem'),(5,'5th sem'),(6,'6th sem'),(7,'7th sem'),(8,'8th sem')],default=['1'],label="Semester :")
+    mentor = StringField(label="Enter Mentor ID: ")
     submit = SubmitField(label='Add/Remove')
 
 class AdminFaculty(FlaskForm):
     choose = SelectField(choices = [('1','Add Faculty'),('2','Remove Faculty')], default = ['1'],label='Add/Delete :')
+    facultyid = IntegerField(label="Enter Faculty ID :")
+    name = StringField(label="Enter name : ")
+    email = StringField(label='Email: ')
+    password = PasswordField(label='Password: ')
     submit = SubmitField(label='Add/Remove')
 
-class AdminSubject(FlaskForm):
-    choose = SelectField(choices = [('1','Add Subject'),('2','Remove Subject')], default = ['1'],label='Add/Delete :')
+class AdminBranchDivision(FlaskForm):
+    choose = SelectField(choices = [('1','Add Branch'),('2','Remove Branch')], default = ['1'],label='Add/Delete :')
+    branch = StringField(label="Enter Branch: ")
+    division = IntegerField(label="Enter number of Division: ")
+    submit = SubmitField(label='Add/Remove')
+
+class AdminCourse(FlaskForm):
+    choose = SelectField(choices = [('1','Add Course'),('2','Remove Course')], default = ['1'],label='Add/Delete :')
+    courseid = IntegerField(label="Enter Course ID :")
+    name = StringField(label="Enter Course Name : ")
     submit = SubmitField(label='Add/Remove')
 
 class AdminClassLocation(FlaskForm):
     choose = SelectField(choices = [('1','Add Class Location'),('2','Remove Class Location')], default = ['1'],label='Add/Delete :')
+    classLocation = StringField(label="Enter Class Location (e.g. A101): ")
+    floor = IntegerField(label="Enter Floor Number: ")
     submit = SubmitField(label='Add/Remove')

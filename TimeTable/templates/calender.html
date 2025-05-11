@@ -23,9 +23,13 @@ Custom Datepicker
 <div class="col">
   <a href="{{ url_for('student_dashboard_page') }}">Dashboard</a>
   <br>
+  <a href="{{ url_for('view_task_page') }}">View Task</a>
+  <br>
   <a href="{{ url_for('task_page') }}">Add Task</a>
   <br>
   <a href="{{ url_for('remove_task_page') }}">Remove Task</a>
+  <br>
+  <a href="{{ url_for('chat_page') }}">AI Chat</a>
   <br>
   <a href="#">Profile</a>
 </div>
@@ -38,7 +42,7 @@ Custom Datepicker
   <div class="row">
     <div class="col">
       <div class="datepicker-container">
-        <input type="text" class="date-input" placeholder="Select date">
+        <input type="text" class="date-input" id="date-input" placeholder="Select date">
 
         <div class="datepicker">
           <!-- .datepicker-header -->
