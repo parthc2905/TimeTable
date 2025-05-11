@@ -38,14 +38,19 @@ class Task(db.Model):
     description = db.Column(db.String(length=60))
     own = db.Column(db.Integer(),db.ForeignKey('student.id'))
     
+class BranchDivision(db.Model):
+    id = db.Column(db.Integer(),primary_key=True)
+    branch = db.Column(db.String(length=100))
+    division = db.Column(db.Integer())
+    # code = db.Column(db.Integer())
 
-# class Courses(db.Model):
-#     id = db.Column(db.Integer(),primary_key=True)
-#     courseid = db.Column(db.Integer(),unique=True,nullable=False)
-#     name = db.Column(db.String(length=68))
-#     student = db.relationship('Student', backref="owner", uselist=False)
+class Courses(db.Model):
+    id = db.Column(db.Integer(),primary_key=True)
+    courseid = db.Column(db.Integer(),unique=True,nullable=False)
+    name = db.Column(db.String(length=68))
+    # student = db.relationship('Student', backref="owner", uselist=False)
 
-# class Locations(db.Model):
-#     id = db.Column(db.Integer(),primary_key=True)
-#     classLocation = db.Column(db.String(length=10),unique=True,nullable=False)
-#     floor = db.Column(db.Integer(),nullable=False)
+class Locations(db.Model):
+    id = db.Column(db.Integer(),primary_key=True)
+    classLocation = db.Column(db.String(length=10),unique=True,nullable=False)
+    floor = db.Column(db.Integer(),nullable=False)

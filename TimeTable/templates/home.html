@@ -38,9 +38,17 @@
     </nav>
 
     <div class="buttons">
-        <form method="POST">
-            <input type="submit" value="Generate" name="submit" class="btn btn-primary fs-5 mx-5 text-white">
-            <input type="submit" value="View" name="submit" class="btn btn-primary fs-5 mx-5 text-white">
+        <form method="POST" action="/home">
+            <!-- Your form fields here -->
+            
+            <!-- Submit buttons with name attributes -->
+            <button type="submit" name="generate" value="true" class="btn btn-primary">
+                Generate
+            </button>
+            
+            <button type="submit" name="view" value="true" class="btn btn-secondary">
+                View
+            </button>
         </form>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

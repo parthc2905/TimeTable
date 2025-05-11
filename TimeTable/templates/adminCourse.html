@@ -1,7 +1,7 @@
 {% extends 'admindashboard.html' %}
 
 {% block title %}
-Admin - Class Location Management
+Admin - Course Management
 {% endblock %}
 
 {% block content_2 %}
@@ -11,40 +11,40 @@ Admin - Class Location Management
         <div class="col-md-6">
             <form method="POST" class="form-group card my-5 p-4">
                 {{ form.hidden_tag() }}
-                <h1 class="text-center p-4">Class Location</h1>
+                <h1 class="text-center p-4">Course</h1>
                 <br>
                 {{ form.choose.label(class="form-label") }}
                 {{ form.choose(class="form-control") }}
                 <br>
-                {{ form.classLocation.label(class="form-label") }}
-                {{ form.classLocation(class="form-control", placeholder="e.g. A101") }}
+                {{ form.courseid.label(class="form-label") }}
+                {{ form.courseid(class="form-control", placeholder="Course ID") }}
                 <br>
-                {{ form.floor.label(class="form-label") }}
-                {{ form.floor(class="form-control", placeholder="Floor Number") }}
+                {{ form.name.label(class="form-label") }}
+                {{ form.name(class="form-control", placeholder="Course Name") }}
                 <br>
                 {{ form.submit(class="form-control btn btn-primary btn-lg form-label") }}
             </form>
         </div>
 
-        <!-- Location List Column -->
+        <!-- Course List Column -->
         <div class="col-md-6">
             <div class="card my-5">
                 <div class="card-header">
-                    <h3 class="text-center">Current Class Locations</h3>
+                    <h3 class="text-center">Current Courses</h3>
                 </div>
                 <div class="card-body">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>Location</th>
-                                <th>Floor</th>
+                                <th>Course ID</th>
+                                <th>Name</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {% for location in locations %}
+                            {% for course in courses %}
                             <tr>
-                                <td>{{ location.classLocation }}</td>
-                                <td>{{ location.floor }}</td>
+                                <td>{{ course.courseid }}</td>
+                                <td>{{ course.name }}</td>
                             </tr>
                             {% endfor %}
                         </tbody>

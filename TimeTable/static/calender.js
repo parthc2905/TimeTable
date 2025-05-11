@@ -24,7 +24,7 @@ dateInput.addEventListener("click", () => {
 
 // hide datepicker
 cancelBtn.addEventListener("click", () => {
-  datepicker.hidden = false;
+  datepicker.hidden = true;
 });
 
 // handle apply button click event
@@ -35,6 +35,7 @@ applyBtn.addEventListener("click", () => {
     month: "2-digit",
     day: "2-digit",
   });
+  
   // hide datepicker
   datepicker.hidden = false;
 });
